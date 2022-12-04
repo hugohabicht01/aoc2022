@@ -35,7 +35,7 @@ function parse(input: string) {
 function fullycontained(pair: parsedType, turnedAround = false): boolean {
   if (pair.first.start <= pair.second.start && pair.first.end >= pair.second.end)
     return true
-  if (turnedAround === true)
+  if (turnedAround)
     return false
   return fullycontained({ first: pair.second, second: pair.first }, true)
 }
@@ -49,4 +49,30 @@ function part1(data: parsedType[]) {
   }, 0)
 }
 
-console.log(part1(parse(input)))
+function part2(data: parsedType[]) {
+  return data.reduce<number>((sum, currentPair) => {
+    if (hasOverlap(currentPair))
+      return sum + 1
+
+    return sum
+  }, 0)
+}
+
+function hasOverlap(currentPair: parsedType, turnedAround = false): boolean {
+  if (isBetween(currentPair.second.start, currentPair.first))
+    return true
+
+  if (isBetween(currentPair.second.end, currentPair.first))
+    return true
+
+  if (turnedAround)
+    return false
+
+  return hasOverlap({ first: currentPair.second, second: currentPair.first }, true)
+}
+
+function isBetween(end: number, currentPair: parsedType['first']) {
+  return currentPair.start <= end && currentPair.end >= end
+}
+
+console.log(part2(parse(input)))
