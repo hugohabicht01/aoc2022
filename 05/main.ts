@@ -9,6 +9,18 @@ class Stack<T> {
     this.items.push(item)
   }
 
+  pushMultiple(items: T[]) {
+    items.forEach(item => this.push(item))
+  }
+
+  popMultiple(amount: number): (T | undefined)[] {
+    const popped: Array<T | undefined> = []
+    for (let numPopped = 0; numPopped < amount; numPopped++)
+      popped.splice(0, 0, this.items.pop())
+
+    return popped
+  }
+
   pop(): T | undefined {
     return this.items.pop()
   }
@@ -117,4 +129,22 @@ const part1 = (input: parsedInputType) => {
   }, []).join('')
 }
 
-console.log(part1(parse(input)))
+const part2 = (input: parsedInputType) => {
+  for (const instruction of input.instructions) {
+    const fromStack = input.stacks[instruction.stackNum - 1]
+    const currentlyHandledItem = fromStack?.popMultiple(instruction.amount)
+    if (!currentlyHandledItem)
+      throw new Error('shouldnt happen')
+    // @ts-expect-error is not gonna happen...
+    input.stacks[instruction.targetStackNum - 1]?.pushMultiple(currentlyHandledItem)
+  }
+
+  return input.stacks.reduce<string[]>((chars, currentStack) => {
+    const topItem = currentStack.peek()
+    if (!topItem)
+      throw new Error('also shouldnt happen')
+    return [...chars, topItem]
+  }, []).join('')
+}
+
+console.log(part2(parse(input)))
