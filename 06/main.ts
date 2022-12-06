@@ -52,4 +52,14 @@ const part1 = (chars: LowercaseSingleCharType[]) => {
   }
 }
 
-console.log(part1(parse(input)))
+const part2 = (chars: LowercaseSingleCharType[]) => {
+  const q = new FixedLengthQueue<LowercaseSingleCharType>(14)
+  let count = 0
+  for (const c of chars) {
+    count++
+    q.enqueue(c)
+    if (q.itemsAllUnique())
+      return count
+  }
+}
+console.log(part2(parse(input)))
